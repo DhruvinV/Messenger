@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF04DB312492CB1800E63412 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF04DB302492CB1800E63412 /* Extensions.swift */; };
 		AF4A5F6C2492BE320022E89A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4A5F6B2492BE320022E89A /* AppDelegate.swift */; };
 		AF4A5F6E2492BE320022E89A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4A5F6D2492BE320022E89A /* SceneDelegate.swift */; };
 		AF4A5F702492BE320022E89A /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4A5F6F2492BE320022E89A /* ConversationsViewController.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AF04DB302492CB1800E63412 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AF4A5F682492BE320022E89A /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF4A5F6B2492BE320022E89A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AF4A5F6D2492BE320022E89A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -82,8 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				AF4A5F6F2492BE320022E89A /* ConversationsViewController.swift */,
-				AF4A5F862492C0170022E89A /* LoginViewController.swift */,
-				AF4A5F882492C0310022E89A /* RegisterViewController.swift */,
+				AF745A712492C39C0067B58C /* LoginController */,
 				AF4A5F8A2492C04E0022E89A /* PhotoViewerViewController.swift */,
 				AF4A5F8C2492C05D0022E89A /* VideoPlayerViewController.swift */,
 				AF4A5F8E2492C0790022E89A /* NewConverstationViewController.swift */,
@@ -113,6 +114,7 @@
 			children = (
 				AF4A5F6B2492BE320022E89A /* AppDelegate.swift */,
 				AF4A5F6D2492BE320022E89A /* SceneDelegate.swift */,
+				AF04DB302492CB1800E63412 /* Extensions.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -131,6 +133,15 @@
 				AF4A5F762492BE330022E89A /* LaunchScreen.storyboard */,
 			);
 			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		AF745A712492C39C0067B58C /* LoginController */ = {
+			isa = PBXGroup;
+			children = (
+				AF4A5F862492C0170022E89A /* LoginViewController.swift */,
+				AF4A5F882492C0310022E89A /* RegisterViewController.swift */,
+			);
+			path = LoginController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,6 +220,7 @@
 				AF4A5F702492BE320022E89A /* ConversationsViewController.swift in Sources */,
 				AF4A5F8D2492C05D0022E89A /* VideoPlayerViewController.swift in Sources */,
 				AF4A5F6C2492BE320022E89A /* AppDelegate.swift in Sources */,
+				AF04DB312492CB1800E63412 /* Extensions.swift in Sources */,
 				AF4A5F6E2492BE320022E89A /* SceneDelegate.swift in Sources */,
 				AF4A5F912492C08C0022E89A /* ProfileViewController.swift in Sources */,
 				AF4A5F8B2492C04E0022E89A /* PhotoViewerViewController.swift in Sources */,
