@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+
 class LoginViewController: UIViewController {
     
     private let scrollView: UIScrollView = {
@@ -64,6 +65,7 @@ class LoginViewController: UIViewController {
         return field
     }()
     
+
     private let loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Log In", for: .normal)
@@ -132,8 +134,8 @@ class LoginViewController: UIViewController {
         }
 //        firbase login
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in
-        
-            
+
+
             guard let strongSelf = self else {
                 return
             }

@@ -227,7 +227,7 @@ class RegisterViewController: UIViewController {
             guard let strongSelf = self else {
                                return
                            }
-            
+
             guard !exists else{
                 strongSelf.alertUserLoginError(message: "Looks like a user for that email address already exists")
                 return
@@ -236,7 +236,7 @@ class RegisterViewController: UIViewController {
                 guard authResult != nil, error == nil else{
                     return
                 }
-                
+
                 DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
