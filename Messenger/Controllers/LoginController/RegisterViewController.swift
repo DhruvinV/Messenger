@@ -226,9 +226,8 @@ class RegisterViewController: UIViewController {
         DatabaseManager.shared.userExists(with: email, completion: { [weak self] exists in
             guard let strongSelf = self else {
                                return
-                           }
-
-            guard !exists else{
+                    }
+            guard exists else{
                 strongSelf.alertUserLoginError(message: "Looks like a user for that email address already exists")
                 return
             }
@@ -236,8 +235,9 @@ class RegisterViewController: UIViewController {
                 guard authResult != nil, error == nil else{
                     return
                 }
-
-                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                let uid = (authResult?.user.uid ?? "") as String
+  
+                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email,uID: uid))
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
         })
@@ -246,6 +246,7 @@ class RegisterViewController: UIViewController {
         
     }
     func alertUserLoginError(message: String = "Please check information provided"){
+        
         let alert = UIAlertController(title: "Whoops", message: message,preferredStyle: .alert )
         alert.addAction(UIAlertAction(title: "Dismiss",
                                       style: .cancel,
