@@ -21,18 +21,20 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1959" y="1478"/>
+            <point key="canvasLocation" x="-1957.9710144927537" y="1435.7142857142856"/>
         </scene>
         <!--Chats-->
         <scene sceneID="aLV-th-g72">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="a9o-5y-QZJ" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Chats" id="xZQ-6l-Dmr"/>
+                    <tabBarItem key="tabBarItem" title="Chats" selectedImage="message.fill" catalog="system" id="xZQ-6l-Dmr">
+                        <color key="badgeColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </tabBarItem>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="hpa-dI-i5y">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="0.32459074259999998" green="0.83234411480000003" blue="0.98041576149999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
@@ -50,7 +52,8 @@
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="E9R-ZM-IBx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
                         <segue destination="a9o-5y-QZJ" kind="relationship" relationship="viewControllers" id="fJI-ns-KSG"/>
@@ -65,11 +68,11 @@
         <scene sceneID="vMf-nX-2Pa">
             <objects>
                 <navigationController id="3do-CL-TEm" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Profile" id="fkj-7J-G2Y"/>
+                    <tabBarItem key="tabBarItem" title="Profile" selectedImage="ellipsis.circle.fill" catalog="system" id="fkj-7J-G2Y"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="QIg-vq-IT4">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" red="0.44470757249999998" green="0.79443258049999999" blue="0.62743139270000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </navigationBar>
                     <connections>
                         <segue destination="yc1-Wv-sct" kind="relationship" relationship="rootViewController" id="GuE-cn-Mov"/>
@@ -106,4 +109,8 @@
             <point key="canvasLocation" x="-997.10144927536237" y="1450.4464285714284"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="ellipsis.circle.fill" catalog="system" width="128" height="121"/>
+        <image name="message.fill" catalog="system" width="128" height="113"/>
+    </resources>
 </document>

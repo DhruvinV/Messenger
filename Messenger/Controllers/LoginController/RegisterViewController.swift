@@ -11,7 +11,7 @@ import FirebaseAuth
 import JGProgressHUD
 class RegisterViewController: UIViewController {
     
-     private let spinner = JGProgressHUD(style: .dark)
+    private let spinner = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
         let scrollview  = UIScrollView()
@@ -228,8 +228,8 @@ class RegisterViewController: UIViewController {
         spinner.show(in: view)
         DatabaseManager.shared.userExists(with: email, completion: { [weak self] exists in
             guard let strongSelf = self else {
-                               return
-                    }
+                return
+            }
             
             DispatchQueue.main.async {
                 strongSelf.spinner.dismiss()
@@ -244,8 +244,28 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 let uid = (authResult?.user.uid ?? "") as String
-  
-                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email,uID: uid))
+                let newUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email, uID: uid)
+                DatabaseManager.shared.insertUser(with: newUser, completion: {success in
+                    if success {
+                        //                        upload image
+                        guard let image = strongSelf.imageView.image,
+                            let data = image.pngData() else{
+                                return
+                        }
+                        
+                        let fileName = newUser.profilePictureURL
+                        StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: {result in
+                            
+                            switch result{
+                            case .success(let downloadURL):
+                                UserDefaults.standard.set(downloadURL,forKey: "profile_pic_URL")
+                                
+                            case .failure(let error):
+                                print(error)
+                            }
+                        })
+                    }
+                })
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
         })

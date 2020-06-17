@@ -22,10 +22,57 @@ class ProfileViewController: UIViewController {
                            forCellReuseIdentifier: "cell")
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.tableHeaderView = createTableHeader()
         
         // Do any additional setup after loading the view.
     }
     
+    func createTableHeader() -> UIView? {
+        guard let uid = UserDefaults.standard.value(forKey: "userUID") else{
+            return nil
+        }
+        let fileName = uid as! String + "_profile_picture.png"
+//        let safeEmail = DatabaseManager.safeEmail(emai)
+        let path  = "images/"+fileName
+        
+        let headerView  = UIView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: 300))
+        headerView.backgroundColor = UIColor(red: 0.56, green: 0.92, blue: 0.73, alpha: 1.00)
+        
+        let imageView = UIImageView(frame: CGRect(x: (headerView.width - 150) / 2,y: 75,width: 150,height: 150))
+        imageView.contentMode = .scaleAspectFill
+        
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.borderWidth = 3
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = imageView.width/2
+        headerView.addSubview(imageView)
+        
+        StorageManager.shared.donwloadURL(for: path, completion: { [weak self] result in
+            switch result {
+            case.success(let url):
+                self?.downloadImage(imageView: imageView, url: url)
+            case.failure(let error):
+                print(error)
+            }
+        })
+        
+        return headerView
+    }
+    
+    func downloadImage(imageView: UIImageView, url :URL){
+        
+        URLSession.shared.dataTask(with: url, completionHandler: {data, _, error  in
+            
+        guard let data = data, error  == nil else {
+            return
+        }
+        DispatchQueue.main.async{
+            let image = UIImage(data: data)
+            imageView.image = image
+        }
+    }).resume()
+    
+}
     
 }
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
@@ -36,7 +83,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
         cell.textLabel?.text = data[indexPath.row]
         cell.textLabel?.textAlignment = .center
-        cell.textLabel?.textColor = UIColor(red: 0.56, green: 0.92, blue: 0.73, alpha: 1.00)
+        cell.textLabel?.textColor = .red
         
         return cell
     }

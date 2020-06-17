@@ -35,15 +35,19 @@ extension DatabaseManager{
         })
     }
 /// Inserts new user to database
-    public func insertUser(with user: ChatAppUser){
-        let value = ["firstName": user.firstName, "lastName": user.lastName, "emailAddress":user.safeEmail]
+    public func insertUser(with user: ChatAppUser, completion: @escaping (Bool)->Void) {
+        let value = ["firstName": user.firstName, "lastName": user.lastName, "emailAddress":user.safeEmail,"profilePic":user.profilePictureURL]
         let userRef = database.child("users").child(user.uID)
-        userRef.updateChildValues(value, withCompletionBlock: {(err, ref) in
-            if err != nil{
+        userRef.updateChildValues(value, withCompletionBlock:{ err, _ in
+            guard err == nil else{
                 print(err!)
+                completion(false)
                 return
             }
+            
+          
         })
+          completion(true)
     }
   
 }
@@ -52,6 +56,9 @@ struct ChatAppUser{
     let lastName: String
     let emailAddress: String
     let uID: String
+    var profilePictureURL: String {
+        return  "\(uID)_profile_picture.png"
+    }
     
     var safeEmail: String{
         var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "&")

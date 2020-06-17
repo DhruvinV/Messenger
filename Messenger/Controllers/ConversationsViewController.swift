@@ -39,6 +39,7 @@ class ConversationsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(didTapComposeButton))
+        
         view.addSubview(tableView)
         view.addSubview(noConversationsLabel)
         setupTableView()
@@ -89,6 +90,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell",for: indexPath)
         cell.textLabel?.text = "Hello World"
         cell.accessoryType = .disclosureIndicator
+        
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
