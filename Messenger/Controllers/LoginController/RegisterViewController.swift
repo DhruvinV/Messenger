@@ -248,18 +248,17 @@ class RegisterViewController: UIViewController {
                 DatabaseManager.shared.insertUser(with: newUser, completion: {success in
                     if success {
                         //                        upload image
-                        guard let image = strongSelf.imageView.image,
-                            let data = image.pngData() else{
+
+                        guard let image = strongSelf.imageView.image,  let data = image.pngData() else{
                                 return
                         }
-                        
+                        UserDefaults.standard.set(newUser.uID,forKey: "userUID")
                         let fileName = newUser.profilePictureURL
+                        print("\(fileName) in register view controller")
                         StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: {result in
-                            
                             switch result{
                             case .success(let downloadURL):
-                                UserDefaults.standard.set(downloadURL,forKey: "profile_pic_URL")
-                                
+                                UserDefaults.standard.set(downloadURL,forKey: "profile_picture_url")
                             case .failure(let error):
                                 print(error)
                             }

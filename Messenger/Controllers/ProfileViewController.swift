@@ -32,8 +32,9 @@ class ProfileViewController: UIViewController {
             return nil
         }
         let fileName = uid as! String + "_profile_picture.png"
-//        let safeEmail = DatabaseManager.safeEmail(emai)
-        let path  = "images/"+fileName
+//        let safeEmail = "DatabaseManager.safeEmail(emai)
+        print("\(fileName) IN CREATE TABLE HEADER")
+        let path  = "images/" + fileName
         
         let headerView  = UIView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: 300))
         headerView.backgroundColor = UIColor(red: 0.56, green: 0.92, blue: 0.73, alpha: 1.00)
@@ -50,6 +51,7 @@ class ProfileViewController: UIViewController {
         StorageManager.shared.donwloadURL(for: path, completion: { [weak self] result in
             switch result {
             case.success(let url):
+                print(url,"in download url")
                 self?.downloadImage(imageView: imageView, url: url)
             case.failure(let error):
                 print(error)
@@ -62,7 +64,7 @@ class ProfileViewController: UIViewController {
     func downloadImage(imageView: UIImageView, url :URL){
         
         URLSession.shared.dataTask(with: url, completionHandler: {data, _, error  in
-            
+
         guard let data = data, error  == nil else {
             return
         }
@@ -90,7 +92,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let actionSheet = UIAlertController(title:"Log Out",
-                                            message:"Are you sure you want to leave",
+                                            message:"Are you sure you want to leave :(",
                                             preferredStyle:.actionSheet)
         actionSheet.addAction(UIAlertAction(title:"Log Out",
                                             style: .destructive,

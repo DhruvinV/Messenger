@@ -12,6 +12,8 @@ import JGProgressHUD
 
 
 class ConversationsViewController: UIViewController {
+
+    
     
     private let spinner = JGProgressHUD(style: .dark)
     
@@ -49,8 +51,27 @@ class ConversationsViewController: UIViewController {
     }
     @objc func didTapComposeButton(){
        let vc = NewConverstationViewController()
-        let navVC = UINavigationController(rootViewController: vc)
-        present(navVC,animated: true)
+        vc.completion = { [weak self]  res in
+            
+            print("\(res)")
+            self?.createNewConversation(result: res)
+            
+        }
+    let navVC = UINavigationController(rootViewController: vc)
+    present(navVC,animated: true)
+        
+    }
+    
+    private func createNewConversation(result: [String:String])
+    {
+        guard let name = result["name"], let email = result["email"], let uid = result["uid"] else{
+            return
+        }
+        
+        let vc = ChatViewController(with: email)
+        vc.title = name
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
         
     }
     override func viewDidAppear(_ animated: Bool){
@@ -95,7 +116,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let vc = ChatViewController()
+        let vc = ChatViewController(with: "Dsds")
         vc.title = "Micheal Scott"
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)
