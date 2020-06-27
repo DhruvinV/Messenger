@@ -12,27 +12,65 @@ import InputBarAccessoryView
 
 struct Message: MessageType{
     
-    var sender: SenderType
-    var messageId: String
-    var sentDate: Date
-    var kind: MessageKind
+   public var sender: SenderType
+   public var messageId: String
+   public var sentDate: Date
+   public var kind: MessageKind
+}
+extension MessageKind {
+    var rawValue: String {
+        switch self{
+        case .text(_):
+            return "text"
+        case .attributedText(_):
+            return "attributedText"
+        case .photo(_):
+            return "photo"
+        case .video(_):
+            return "video"
+        case .location(_):
+            return "location"
+        case .emoji(_):
+            return "emoji"
+        case .audio(_):
+            return "audio"
+        case .contact(_):
+            return "contact"
+        case .custom(_):
+            return "custom"
+        }
+    }
 }
 
 struct Sender: SenderType{
-    var photoURL : String
-    var senderId: String
-    var displayName: String
+   public var photoURL : String
+   public var senderId: String
+   public var displayName: String
     
     
 }
 class ChatViewController: MessagesViewController {
     
-    
+    public static let dateFormatter: DateFormatter = {
+        let formatted = DateFormatter()
+        formatted.dateStyle = .medium
+        formatted.timeStyle = .long
+        formatted.locale = .current
+        return formatted
+    }()
     public let otherUserEmail: String
-    public var isNewConversation  = false
+    public var isNewConversation  = true
     
     private var messages = [Message]()
-    private let selfSender = Sender(photoURL: "", senderId: "1", displayName: "Joe Smith")
+    private var selfSender:  Sender?{
+        guard let email = UserDefaults.standard.value(forKey: "email") else{
+            return nil
+        }
+        
+        return Sender(photoURL: "", senderId: email as! String, displayName: "Joe Smith")
+        
+    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,21 +101,50 @@ class ChatViewController: MessagesViewController {
 extension ChatViewController: InputBarAccessoryViewDelegate{
 
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        guard !text.replacingOccurrences(of: " ", with: "").isEmpty else{
-            return
+        guard !text.replacingOccurrences(of: " ", with: "").isEmpty,
+            let selfSender = self.selfSender, let messageID = createMessageId() else{
+                print("fail")
+                return
         }
-//        send Message
+       
+        //        send Message
         if isNewConversation{
+            print("Sending message")
+            let message = Message(sender: selfSender, messageId: messageID, sentDate: Date(), kind: .text(text))
+            DatabaseManager.shared.createNewConversation(with: otherUserEmail, firstMessage: message, completion: { res in
+                if res{
+                    print("messageSent")
+                }else{
+                    print("Failed to sent")
+                }
+            })
             
         }else{
             
         }
     }
+    private func createMessageId() -> String?{
+//        date, otheruseremail, senderemail, randomint
+        
+        guard let currUserEmail = UserDefaults.standard.value(forKey: "email") as? String
+             else {
+            return nil
+        }
+        let safeEmail = DatabaseManager.generateSafeEmail(emailAddress: currUserEmail)
+        let dateString = Self.dateFormatter.string(from: Date())
+        let newIdentifier = "\(otherUserEmail)_\(safeEmail)_\(dateString)"
+        print("message id \(newIdentifier)")
+        return newIdentifier
+    }
 
 }
 extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
     func currentSender() -> SenderType {
-        return selfSender
+        if let sender = selfSender{
+            return sender
+        }
+        fatalError("selfSender is nil email should be cached")
+        return Sender(photoURL: "", senderId: "", displayName: "")
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
