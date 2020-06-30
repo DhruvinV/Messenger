@@ -89,6 +89,7 @@ extension NewConverstationViewController: UITableViewDelegate, UITableViewDataSo
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let targetUserData = results[indexPath.row]
+//        UserDefaults.standard.set(results[indexPath.row]["uid"] as! String, forKey: "otherUserID")
         dismiss(animated: true, completion: {[weak self] in
             self?.completion?(targetUserData)
         })
