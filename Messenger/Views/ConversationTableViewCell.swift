@@ -51,7 +51,7 @@ class ConversationTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        contentView.backgroundColor = UIColor(red: 0.81, green: 0.86, blue: 1.00, alpha: 1.00)
+        contentView.backgroundColor = .systemGray6
         userImageView.frame = CGRect(x: 10, y: 10, width: 100, height: 100)
         userNameLabel.frame = CGRect(x: userImageView.right+10, y: 10, width: contentView.width - 20 - userImageView.width, height: (contentView.heigt-20)/2)
         userMessageLabel.frame = CGRect(x: userImageView.right+10, y: userNameLabel.bottom + 10, width: contentView.width - 20 - userImageView.width, height: (contentView.heigt-20)/2)
@@ -61,7 +61,8 @@ class ConversationTableViewCell: UITableViewCell {
         
         self.userMessageLabel.text  = model.latestMessage.text
         self.userNameLabel.text = model.name
-        let path = "images/o3XjK8mi2JW5XQAvsg7PHf4IaN83_profile_picture.png"
+        let otherUserIdentifier = model.otherUserUID
+        let path = "images/\(otherUserIdentifier)_profile_picture.png"
         StorageManager.shared.donwloadURL(for: path, completion: {[weak self] res in
             switch res {
             case .success(let url):

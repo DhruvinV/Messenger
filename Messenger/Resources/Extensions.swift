@@ -56,4 +56,19 @@ extension UIColor {
 
         return nil
     }
+    
+}
+extension UserDefaults{
+    enum Keys: String, CaseIterable {
+
+           case userUID
+           case email
+           case  fullName
+           case firstName
+        case lastName
+
+       }
+    func reset(){
+        Keys.allCases.forEach{removeObject(forKey: $0.rawValue)}
+    }
 }

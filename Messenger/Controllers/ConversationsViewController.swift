@@ -15,6 +15,7 @@ struct Conversation {
     let name: String
     let otherUserEmail: String
     let  latestMessage: LatestMessage
+    let otherUserUID: String
 }
 
 struct LatestMessage {
@@ -23,9 +24,7 @@ struct LatestMessage {
     let isRead: Bool
     
 }
-class ConversationsViewController: UIViewController {
-
-    
+final class ConversationsViewController: UIViewController {
     
     private let spinner = JGProgressHUD(style: .dark)
     
@@ -47,10 +46,9 @@ class ConversationsViewController: UIViewController {
         label.font = .systemFont(ofSize: 21, weight: .medium)
         label.isHidden = true
         return label
+        
     }()
     
-
-        
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,10 +57,7 @@ class ConversationsViewController: UIViewController {
         view.addSubview(tableView)
         view.addSubview(noConversationsLabel)
         setupTableView()
-        fetchConversations()
-        listenForNewConversations()
-    
-        
+ 
     }
     
     
@@ -72,24 +67,29 @@ class ConversationsViewController: UIViewController {
             let UID = UserDefaults.standard.value(forKey: "userUID") as? String else{
             return
         }
-        print("strting")
+        print("Start Listening for messages")
         let safeEmail = DatabaseManager.generateSafeEmail(emailAddress: email)
+        
+        
         DatabaseManager.shared.getAllConversation(for: safeEmail,uid: UID,completion: { [weak self] res in
             switch res{
             case.success(let conversations):
-                print("Success")
                 print(conversations)
                 guard !conversations.isEmpty else{
+                 self?.noConversationsLabel.isHidden = false
+                     self?.tableView.isHidden = true
                     return
                 }
-                
-//                p
                 self?.conversations = conversations
+                self?.tableView.isHidden = false
+               self?.noConversationsLabel.isHidden = true
                 
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
             case.failure(let error):
+                self?.noConversationsLabel.isHidden = false
+                self?.tableView.isHidden = true
                 print("Failed to load convertsations \(error)")
             }
             
@@ -97,34 +97,60 @@ class ConversationsViewController: UIViewController {
     }
     
     @objc func didTapComposeButton(){
-       let vc = NewConverstationViewController()
+        let vc = NewConverstationViewController()
         vc.completion = { [weak self]  res in
             
-            print("\(res)")
-            self?.createNewConversation(result: res)
-            
-            
+            guard let strongSelf = self else{
+                return
+            }
+            let currentConversations = strongSelf.conversations
+            if let targetConversation = currentConversations.first(where: {
+                $0.otherUserEmail == DatabaseManager.generateSafeEmail(emailAddress: res["email"] ?? "")
+            }){
+                let vc = ChatViewController(with: targetConversation.otherUserEmail, id: targetConversation.id, otherUserUid: targetConversation.otherUserUID, otherUserName: targetConversation.name)
+                vc.isNewConversation = false
+                vc.title = targetConversation.name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                strongSelf.navigationController?.pushViewController(vc, animated: true)
+            }else{
+                
+               self?.createNewConversation(result: res)
+            }
         }
-    let navVC = UINavigationController(rootViewController: vc)
-    present(navVC,animated: true)
-        
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC,animated: true)
     }
     
     private func createNewConversation(result: [String:String])
     {
         guard let name = result["name"], let email = result["email"], let uid = result["uid"] else{
             return
-        }
-        
-        let vc = ChatViewController(with: email,id: nil)
-        vc.title = name
-        vc.navigationItem.largeTitleDisplayMode = .never
-        navigationController?.pushViewController(vc, animated: true)
+    }
+        DatabaseManager.shared.checkForExistingConversation(with: name, targetRecipientUID: uid,completion:{ [weak self] response in
+            guard let strongself = self else{
+                return
+            }
+            switch response{
+            case.success(let convID):
+                let vc = ChatViewController(with: email,id: convID,otherUserUid: uid,otherUserName: name)
+                vc.isNewConversation = false
+                vc.title = name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                strongself.navigationController?.pushViewController(vc, animated: true)
+                
+            case.failure(_):
+                let vc = ChatViewController(with: email,id: nil, otherUserUid: uid,otherUserName: name)
+                vc.isNewConversation = true
+                vc.title = name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                strongself.navigationController?.pushViewController(vc, animated: true)
+            }
+        })
         
     }
     override func viewDidAppear(_ animated: Bool){
         super.viewDidAppear(animated)
-
+        listenForNewConversations()
         validateAuth()
     }
     
@@ -139,15 +165,14 @@ class ConversationsViewController: UIViewController {
     private func setupTableView(){
         tableView.delegate  = self
         tableView.dataSource = self
+        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame =  view.bounds
     }
     
-    private func fetchConversations(){
-        tableView.isHidden = false
-    }
+
 }
 
 extension ConversationsViewController: UITableViewDelegate, UITableViewDataSource {
@@ -164,7 +189,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let model = conversations[indexPath.row]
-        let vc = ChatViewController(with: model.otherUserEmail, id: model.id)
+        let vc = ChatViewController(with: model.otherUserEmail, id: model.id, otherUserUid: model.otherUserUID, otherUserName: model.name)
         vc.title = model.name
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)

@@ -148,14 +148,33 @@ class LoginViewController: UIViewController {
                 strongSelf.spinner.dismiss()
             }
                
-            guard let result =  authResult, error == nil else{
+            guard let result =  authResult,error == nil else{
                 return
             }
             let user = result.user
             
+            DatabaseManager.shared.getDataFor(path: "users/\(user.uid)", completion: {res in
+                switch res{
+                case .success(let data):
+                    guard let userData = data as? [String:Any],
+                    let firstName = userData["firstName"] as? String,
+                    let lastName = userData["lastName"] as? String else{
+                        return
+                    }
+                    UserDefaults.standard.set("\(firstName)", forKey: "firstName")
+                    UserDefaults.standard.set("\(lastName)", forKey: "lastName")
+                    UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "fullName")
+               
+                case .failure(let error):
+                    print("Failed to fetch \(error)")
+                }
+                
+            })
+            
             UserDefaults.standard.set(user.uid, forKey: "userUID")
             UserDefaults.standard.set(email, forKey: "email")
-            print("Logged In User: \(user.uid)")
+           
+            print("Logged In User: \(user.uid) \(email)")
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
         

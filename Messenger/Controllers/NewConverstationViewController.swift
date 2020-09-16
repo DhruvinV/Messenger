@@ -19,7 +19,7 @@ class NewConverstationViewController: UIViewController {
     private var results = [[String:String]]()
     
     private let searchBar: UISearchBar = {
-       
+        
         let Bar = UISearchBar()
         Bar.placeholder = "Search for friends...."
         return Bar
@@ -28,7 +28,7 @@ class NewConverstationViewController: UIViewController {
     private  let tableView: UITableView = {
         let table = UITableView()
         table.isHidden  = true
-        table.register(UITableViewCell.self,forCellReuseIdentifier: "cell")
+        table.register(NewConversationCell.self,forCellReuseIdentifier: NewConversationCell.identifier)
         return table
     }()
     private let noResultsLabel: UILabel = {
@@ -53,11 +53,8 @@ class NewConverstationViewController: UIViewController {
         view.backgroundColor = .white
         navigationController?.navigationBar.topItem?.titleView = searchBar
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Cancel", style: .done, target: self, action: #selector(dismissSelf))
-
+        
         searchBar.becomeFirstResponder()
-//        becomeFirstResponder()
-     
-//         searchBar.becomeFirstResponder()
     }
     
     override func viewDidLayoutSubviews() {
@@ -66,15 +63,15 @@ class NewConverstationViewController: UIViewController {
         noResultsLabel.frame = CGRect(x: view.width/4,
                                       y: 100,
                                       width: view.width/2,
-                                    height: 200
-                                    )
+                                      height: 200
+        )
     }
-
-
-@objc private func dismissSelf(){
+    
+    
+    @objc private func dismissSelf(){
         dismiss(animated: true, completion: nil)
     }
-
+    
 }
 
 extension NewConverstationViewController: UITableViewDelegate, UITableViewDataSource{
@@ -82,21 +79,21 @@ extension NewConverstationViewController: UITableViewDelegate, UITableViewDataSo
         return results.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier:"cell",for: indexPath)
-        cell.textLabel?.text = results[indexPath.row]["name"]
+        let model = results[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier:NewConversationCell.identifier,for: indexPath) as! NewConversationCell
+        cell.configure(with: model)
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let targetUserData = results[indexPath.row]
-//        UserDefaults.standard.set(results[indexPath.row]["uid"] as! String, forKey: "otherUserID")
         dismiss(animated: true, completion: {[weak self] in
             self?.completion?(targetUserData)
         })
-        
-        
     }
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 90
+    }
 }
 extension NewConverstationViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -107,9 +104,7 @@ extension NewConverstationViewController: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         results.removeAll()
         spinner.show(in: view)
-        print("sdsdsd\(text)")
         self.searchUsers(query: text)
-        
         
     }
     
@@ -137,12 +132,12 @@ extension NewConverstationViewController: UISearchBarDelegate {
         }
         self.spinner.dismiss()
         let results: [[String:String]] = self.users.filter({
-            guard let name = $0["name"]?.lowercased() else{
+            guard let name = $0["name"]?.lowercased(), let currUserLoggedIn =  UserDefaults.standard.string(forKey: "fullName")?.lowercased()else{
                 return false
             }
-            return name .hasPrefix(term.lowercased())
+            return name .hasPrefix(term.lowercased()) && name != currUserLoggedIn
+            
         })
-        
         self.results = results
         updateUI()
     }

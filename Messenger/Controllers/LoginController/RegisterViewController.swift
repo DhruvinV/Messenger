@@ -254,8 +254,10 @@ class RegisterViewController: UIViewController {
                         }
                         UserDefaults.standard.set(newUser.uID,forKey: "userUID")
                         UserDefaults.standard.set(email,forKey: "email")
+                        UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "fullName")
+                         UserDefaults.standard.set("\(firstName)", forKey: "firstName")
+                         UserDefaults.standard.set("\(lastName)", forKey: "lastName")
                         let fileName = newUser.profilePictureURL
-                        print("\(fileName) in register view controller")
                         StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: {result in
                             switch result{
                             case .success(let downloadURL):
